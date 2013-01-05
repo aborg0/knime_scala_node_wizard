@@ -1,0 +1,4 @@
+source.__JAR_NAME__ = src/main/scala/
+bin.includes = plugin.xml,\
+               META-INF/,\
+               __JAR_NAME__

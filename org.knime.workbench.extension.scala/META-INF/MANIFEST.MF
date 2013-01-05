@@ -1,0 +1,126 @@
+Manifest-Version: 1.0
+Export-Package: org.knime.workbench.extension.wizards,org.knime.workbe
+ nch.plugin
+Bundle-ActivationPolicy: lazy
+Bundle-Name: KNIME Workbench Extensions - Scala
+Created-By: 1.6.0_26-b03 (Sun Microsystems Inc.)
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
+ JavaSE-1.7
+Require-Bundle: org.eclipse.core.resources;bundle-version="[3.6.0,4.0.0)",
+ org.eclipse.ui.ide;bundle-version="[3.6.1,4.0.0)",
+ org.eclipse.jdt.core;bundle-version="[3.6.1,4.0.0)",
+ org.eclipse.jdt.ui;bundle-version="[3.6.1,4.0.0)",
+ org.knime.core;bundle-version="[2.7.0,3.0.0)",
+ org.eclipse.ui.views.properties.tabbed;bundle-version="[3.5.100,4.0.0)",
+ org.eclipse.core.runtime.compatibility;bundle-version="[3.2.100,4.0.0)",
+ org.eclipse.gef;bundle-version="[3.6.1,4.0.0)",
+ org.eclipse.pde;bundle-version="[3.6.1,4.0.0)",
+ org.scala-ide.scala.library;bundle-version="2.10.0"
+Ant-Version: Apache Ant 1.8.3
+Bundle-Vendor: KNIME GmbH, Konstanz, Germany
+Bundle-Version: 2.7.0.qualifier
+Bundle-Activator: org.knime.workbench.plugin.KNIMEExtensionPlugin
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.knime.workbench.extension.scala;singleton:=true
+
+Name: LICENSE.txt
+SHA1-Digest: BX1KuxTrnnuAB3OpgEcWgaEwe2I=
+
+Name: templates/plugin.template
+SHA1-Digest: OR9TaYqPc6bUjtMLh8E89lznjm4=
+
+Name: org/knime/workbench/plugin/KNIMEExtensionPlugin.class
+SHA1-Digest: Wrk0sV5Uv5fdWGLCPChFb7YiStY=
+
+Name: templates/NodeDescriptionXML.template
+SHA1-Digest: 3y2bIdIIBXW9bD9f8+18YyooLHc=
+
+Name: org/knime/workbench/extension/wizards/NewKNIMEPluginWizard.class
+SHA1-Digest: NP/Kn0+Uyn7QKTL19GFeUbT7MPA=
+
+Name: templates/NodeFactory.template
+SHA1-Digest: 0EuOaG99xIYC7RchutVgmNWOQF8=
+
+Name: templates/NodeViewEmpty.template
+SHA1-Digest: TLbYMqZuiHzlLtbeaYdmzodfEvY=
+
+Name: org/knime/workbench/extension/wizards/NewKNIMEPluginWizardPage$5
+ .class
+SHA1-Digest: devU8aCS97BWEGeATSEy2LvdDyo=
+
+Name: icons/knime_extension16.png
+SHA1-Digest: 2+fSN/qeS4B0rNjlAh5vgtXM3vw=
+
+Name: org/knime/workbench/extension/wizards/NewKNIMEPluginWizard$1.cla
+ ss
+SHA1-Digest: Bis1K9T3SjvrFbIjO+xsq2hHfow=
+
+Name: templates/packageHTML.template
+SHA1-Digest: 34GxH3epDzX+EOAjb5tfYcSzutg=
+
+Name: org/knime/workbench/extension/wizards/NewKNIMEPluginWizard$2.cla
+ ss
+SHA1-Digest: cHpBCPSD/pbTXUl7wP1fFRQ8Ncc=
+
+Name: org/knime/workbench/extension/wizards/NewKNIMEPluginWizardPage$2
+ .class
+SHA1-Digest: fzaUWHZKTb5ptY9niCjVg0RAEFk=
+
+Name: icons/knime_extension48.png
+SHA1-Digest: 5oRPf7QYvClSw/uUCK79Y639jWg=
+
+Name: icons/knime_extension55.png
+SHA1-Digest: Zr226wXgSA26TPHU/t4WZaQlQU8=
+
+Name: templates/MANIFEST.template
+SHA1-Digest: 1RzJTU+pgtaftj1t7j4YOeQysHU=
+
+Name: templates/NodeDialog.template
+SHA1-Digest: e2ubtNGkE3ZyvhghzVQaY9Ky7hk=
+
+Name: org/knime/workbench/extension/wizards/NewKNIMEPluginWizardPage$4
+ .class
+SHA1-Digest: Be+ABxhjD9ucuTPsiinKFZmnO60=
+
+Name: org/knime/workbench/extension/wizards/NewKNIMEPluginWizardPage$1
+ .class
+SHA1-Digest: cU1C5OEl9Bp8mrcto13mKMNNScA=
+
+Name: templates/project.template
+SHA1-Digest: lL+Hrpj7FGT6ivI7h0dsRIBoZhE=
+
+Name: templates/NodeView.template
+SHA1-Digest: JIWXx3iQcNaDTppNx1fZ4je8KPQ=
+
+Name: templates/NodeModelEmpty.template
+SHA1-Digest: wUYJHOvN7u/nA+nQsfImefwcIgw=
+
+Name: org/knime/workbench/extension/wizards/NewKNIMEPluginWizardPage$3
+ .class
+SHA1-Digest: V7GVeV4ySUnQRRIgQzgQITULWus=
+
+Name: plugin.xml
+SHA1-Digest: SGueWPD7dEv46ymw4FKqvj/IopM=
+
+Name: templates/default.png
+SHA1-Digest: AJNMOCx9qIrW+jFbHO7lq8vi0xw=
+
+Name: org/knime/workbench/extension/wizards/NewKNIMEPluginWizardPage.c
+ lass
+SHA1-Digest: aEQd9G0Jv4aRfGSNxzXHr5COWJU=
+
+Name: templates/BundleActivator.template
+SHA1-Digest: FQKP6N1qlc87dfHDttxZDcdfpaI=
+
+Name: templates/classpath.template
+SHA1-Digest: RrG9ymeBb3yv4o3siS05LQV9uoM=
+
+Name: templates/NodeDialogEmpty.template
+SHA1-Digest: +QldtcwWCocuQWKPcELA+j2uUYc=
+
+Name: templates/NodeModel.template
+SHA1-Digest: cSwj+bPj+Z0p3fR7P/SDb0rsxkE=
+
+Name: templates/build.properties.template
+SHA1-Digest: KTfkMnLTAMTNK39g0hbNYJhE5gw=
+

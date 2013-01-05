@@ -1,0 +1,38 @@
+package __BASE_PACKAGE__;
+
+import org.knime.core.node.NodeView;
+
+/**
+ * <code>NodeView</code> for the "__NODE_NAME__" Node.
+ * __DESCRIPTION__
+ *
+ * @constructor Creates a new view.
+ * 
+ * @param nodeModel The model (class: [[__NODE_NAME__NodeModel]])
+ *
+ * @author __VENDOR_NAME__
+ */
+class __NODE_NAME__NodeView(nodeModel: __NODE_NAME__NodeModel) extends NodeView[__NODE_NAME__NodeModel](nodeModel) {
+  // TODO instantiate the components of the view here.
+
+  /**
+   * @inheritdoc
+   */
+  protected override def modelChanged {
+    // TODO: generated method stub
+  }
+
+  /**
+   * @inheritdoc
+   */
+  protected override def onClose {
+    // TODO: generated method stub
+  }
+
+  /**
+   * @inheritdoc
+   */
+  protected override def onOpen {
+    // TODO: generated method stub
+  }
+}

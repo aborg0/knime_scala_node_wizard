@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: __NODE_NAME__-Node extension for KNIME Workbench
+Bundle-SymbolicName: __BASE_PACKAGE__; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-ClassPath: __JAR_NAME__
+Bundle-Activator: __BASE_PACKAGE__.__NODE_NAME__NodePlugin
+Bundle-Vendor: __VENDOR_NAME__
+Require-Bundle: org.eclipse.core.runtime,
+ org.knime.workbench.core,
+ org.knime.workbench.repository,
+ org.knime.base,
+ org.scala-ide.scala.library;bundle-version="2.10.0",
+ org.apache.log4j;resolution:=optional
+Bundle-ActivationPolicy: lazy
+Export-Package: __BASE_PACKAGE__
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+

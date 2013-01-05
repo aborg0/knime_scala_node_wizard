@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="org.knime.workbench.ui.wizards.category"
+            class="org.knime.workbench.extension.wizards.NewKNIMEPluginWizard"
+            descriptionImage="icons/knime_extension48.png"
+            finalPerspective="org.eclipse.pde.ui.PDEPerspective"
+            hasPages="true"
+            icon="icons/knime_extension16.png"
+            id="org.knime.workbench.extension.wizards.NewKNIMEPluginWizard"
+            name="Create a new KNIME Node-Extension (Scala)"
+            preferredPerspectives="org.eclipse.pde.ui.PDEPerspective"
+            project="true">
+         <description>
+            This wizards creates a new KNIME Node-Extension (optionally with an initial plugin project layout) suitable for adding own functionality to the KNIME Workbench written in Scala.
+         </description>
+      </wizard>
+   </extension>
+
+</plugin>
