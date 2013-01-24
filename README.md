@@ -1,4 +1,4 @@
-knime_scala_node_wizard
+KNIME Scala node wizard
 =======================
 
 The Scala version of KNIME node wizard.
@@ -19,4 +19,4 @@ How to develop:
  - test your modifications, by creating new projects, or adding new nodes to existing projects (in the test eclipse environment)
 
 How to use:
- - create a new project using the wizard and have fun coding KNIME nodes in Scala ;)
+ - create a new project (Create a new KNIME Node-Extension (Scala)) using the wizard and have fun coding KNIME nodes in Scala ;)
