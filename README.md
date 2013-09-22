@@ -6,8 +6,8 @@ The Scala version of KNIME node wizard.
 How to install:
  - download the KNIME SDK
     (http://knime.org/downloads/overview)
- - install there the Scala IDE 2.1 (M3) version for Scala 2.10
-    (http://scala-ide.org/download/milestone.html#scala_ide_21_milestone_3)
+ - install there the Scala IDE 3.0.x version for Scala 2.10
+    (http://scala-ide.org/download/current.html)
  - clone this repository
  - export the plugins
  - install the plugins to eclipse (dropins folder)
