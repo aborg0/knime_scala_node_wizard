@@ -1,9 +1,6 @@
 /*
  * ------------------------------------------------------------------------
- *
- *  Copyright (C) 2003 - 2011
- *  University of Konstanz, Germany and
- *  KNIME GmbH, Konstanz, Germany
+ *  Copyright by KNIME GmbH, Konstanz, Germany
  *  Website: http://www.knime.org; Email: contact@knime.org
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -54,11 +51,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -80,19 +79,24 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import org.knime.workbench.plugin.KNIMEExtensionPlugin;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -109,6 +113,145 @@ import org.w3c.dom.NodeList;
  */
 //@SuppressWarnings("restriction")
 public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
+    private static class SWTSafeMonitorWrapper implements IProgressMonitor {
+        private final IProgressMonitor m_monitor;
+        private final Display m_display;
+        private final AtomicBoolean m_done = new AtomicBoolean(false);
+
+        SWTSafeMonitorWrapper(final IProgressMonitor monitor, final Display display) {
+            m_monitor = monitor;
+            m_display = display;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void beginTask(final String name, final int totalWork) {
+            if (Display.getCurrent() == m_display) {
+                m_monitor.beginTask(name, totalWork);
+            } else {
+                m_display.asyncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        m_monitor.beginTask(name, totalWork);
+                    }
+                });
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void done() {
+            m_done.set(true);
+            if (Display.getCurrent() == m_display) {
+                m_monitor.done();
+            } else {
+                m_display.asyncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        m_monitor.done();
+                    }
+                });
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void internalWorked(final double work) {
+            if (Display.getCurrent() == m_display) {
+                m_monitor.internalWorked(work);
+            } else {
+                m_display.asyncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!m_done.get()) {
+                            m_monitor.internalWorked(work);
+                        }
+                    }
+                });
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean isCanceled() {
+            return m_monitor.isCanceled();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void setCanceled(final boolean value) {
+            m_monitor.setCanceled(value);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void setTaskName(final String name) {
+            if (Display.getCurrent() == m_display) {
+                m_monitor.setTaskName(name);
+            } else {
+                m_display.asyncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!m_done.get()) {
+                            m_monitor.setTaskName(name);
+                        }
+                    }
+                });
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void subTask(final String name) {
+            if (Display.getCurrent() == m_display) {
+                m_monitor.subTask(name);
+            } else {
+                m_display.asyncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!m_done.get()) {
+                            m_monitor.subTask(name);
+                        }
+                    }
+                });
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void worked(final int work) {
+            if (Display.getCurrent() == m_display) {
+                m_monitor.worked(work);
+            } else {
+                m_display.asyncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!m_done.get()) {
+                            m_monitor.worked(work);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+
     private static final String EOL = System.getProperty("line.separator");
 
     private NewKNIMEPluginWizardPage m_page;
@@ -148,19 +291,21 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
         }
         final Properties substitutions = m_page.getSubstitutionMap();
         final boolean includeSampleCode = m_page.getIncludeSampleCode();
+        final boolean activateTp = m_page.getActivateTP();
         final boolean useImplicits = m_page.getUseImplicits();
 
         IRunnableWithProgress op = new IRunnableWithProgress() {
             @Override
             public void run(final IProgressMonitor monitor)
                     throws InvocationTargetException {
+                IProgressMonitor swtSafeMonitor = new SWTSafeMonitorWrapper(monitor, Display.getCurrent());
                 try {
-                    doFinish(projectName, substitutions, includeSampleCode, useImplicits,
-                            monitor);
-                } catch (CoreException e) {
+                    doFinish(projectName, substitutions, includeSampleCode, activateTp, useImplicits,
+                        SubMonitor.convert(swtSafeMonitor));
+                } catch (CoreException | URISyntaxException | IOException e) {
                     throw new InvocationTargetException(e);
                 } finally {
-                    monitor.done();
+                    swtSafeMonitor.done();
                 }
             }
         };
@@ -186,10 +331,8 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
      * @param e the exception
      */
     private void logError(final Exception e) {
-        KNIMEExtensionPlugin.getDefault().getLog().log(
-                new Status(IStatus.ERROR, KNIMEExtensionPlugin.getDefault()
-                        .getBundle().getSymbolicName(), 0, e.getMessage() + "",
-                        e));
+        Bundle myself = FrameworkUtil.getBundle(getClass());
+        Platform.getLog(myself).log(new Status(IStatus.ERROR, myself.getSymbolicName(), 0, e.getMessage() + "", e));
     }
 
     /**
@@ -235,7 +378,7 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
      * @return IProject[] array of IProject in the current workspace
      */
     static IProject[] getProjectsInWorkspace() {
-        return ResourcesPlugin.getWorkspace().getRoot().getProjects();
+        return IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getProjects();
 
     }
 
@@ -252,7 +395,18 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
      */
     private void doFinish(final String projectName,
             final Properties substitutions, final boolean includeSampleCode,
-            boolean useImplicits, final IProgressMonitor monitor) throws CoreException {
+            final boolean activateTP, boolean useImplicits,
+            final SubMonitor monitor) throws CoreException, URISyntaxException, IOException {
+        boolean createNewProject = !isProjectInWorkspace(projectName);
+        if (createNewProject) {
+            monitor.beginTask("Creating project " + projectName, activateTP ? 52 : 22);
+        } else {
+            monitor.beginTask("Adding classes to " + projectName, activateTP ? 42 : 12);
+        }
+        if (activateTP) {
+            TPHelper.getInstance().setupTargetPlatform(monitor);
+        }
+
         // set the current year in the substitutions
         Calendar cal = new GregorianCalendar();
         substitutions.setProperty(NewKNIMEPluginWizardPage.SUBST_CURRENT_YEAR,
@@ -266,14 +420,11 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
                 substitutions.getProperty(
                         NewKNIMEPluginWizardPage.SUBST_NODE_NAME, "Dummy");
 
-        boolean createNewProject = !isProjectInWorkspace(projectName);
-
         // the project, the plugin.xml, the manifest, the src/bin folder
         // are only created if a new project is requested
         IContainer container;
         if (createNewProject) {
             // create the hosting project
-            monitor.beginTask("Creating " + projectName, 20);
             IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
             IProject project = root.getProject(projectName);
             if (project.exists()) {
@@ -285,7 +436,7 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
             container = project;
             monitor.worked(2);
             // 1. create plugin.xml / plugin.properties
-            monitor.beginTask("Creating plugin descriptor/properties ....", 6);
+            monitor.subTask("Creating plugin descriptor/properties ....");
             createFile("plugin.xml", "plugin.template", substitutions, monitor,
                     container);
             createFile("build.properties", "build.properties.template",
@@ -294,14 +445,19 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
                     monitor, container);
             createFile(".project", "project.template", substitutions, monitor,
                     container);
-            monitor.worked(6);
+            final IFolder settingsContainer =
+                    container.getFolder(new Path(".settings"));
+            settingsContainer.create(true, true, monitor);
+            createFile("org.scala-ide.sdt.core.prefs", "org.scala-ide.sdt.core.prefs", substitutions, monitor,
+                    settingsContainer);
+            monitor.worked(8);
 
             // 2. create Manifest.MF
-            monitor.beginTask("Creating OSGI Manifest file ....", 2);
+            monitor.subTask("Creating OSGI Manifest file ....");
             final IFolder metaContainer =
                     container.getFolder(new Path("META-INF"));
             metaContainer.create(true, true, monitor);
-            createFile("MANIFEST.MF", !useImplicits ? "MANIFEST.template" : "MANIFESTImplicits.template", substitutions,
+            createFile("MANIFEST.MF", "MANIFEST.template", substitutions,
                     monitor, metaContainer);
             monitor.worked(2);
         } else {
@@ -312,6 +468,7 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
         }
 
         // 3. create src/bin folders
+        //TODO move the java file to src/main/java instead
         final IFolder srcContainer = container.getFolder(new Path("src/main/scala"));
         final IFolder binContainer = container.getFolder(new Path("bin"));
         if (!srcContainer.exists()) {
@@ -327,7 +484,7 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
             srcContainer.create(true, true, monitor);
         }
         if (!binContainer.exists()) {
-            monitor.beginTask("Creating bin folder ....", 2);
+            monitor.subTask("Creating bin folder ....");
             binContainer.create(true, true, monitor);
         }
 
@@ -335,8 +492,7 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
 
         // 4. create package (folders)
         String[] pathSegments = packageName.split("\\.");
-        monitor.beginTask("Creating package structure ....",
-                pathSegments.length);
+        monitor.subTask("Creating package structure ....");
         IFolder packageContainer = container.getFolder(new Path("src/main/scala"));
         for (int i = 0; i < pathSegments.length; i++) {
             packageContainer =
@@ -344,12 +500,13 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
             if (!packageContainer.exists()) {
                 packageContainer.create(true, true, monitor);
             }
-            monitor.worked(1);
         }
+        monitor.worked(1);
 
         // 4.1. create Bundel Activator if this is a new project
         if (createNewProject) {
-            monitor.beginTask("Creating Bundle Activator....", 1);
+        	//TODO move it to src/main/java
+            monitor.subTask("Creating Bundle Activator....");
             createFile(nodeName + "NodePlugin.java",
                     "BundleActivator.template", substitutions, monitor,
                     packageContainer);
@@ -357,14 +514,14 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
         monitor.worked(1);
 
         // 5. create node factory
-        monitor.beginTask("Creating node factory ....", 1);
+        monitor.subTask("Creating node factory ....");
         createFile(nodeName + "NodeFactory.scala", "NodeFactory.template",
                 substitutions, monitor, packageContainer);
 
         monitor.worked(1);
 
         // 6. create node model
-        monitor.beginTask("Creating node model ....", 1);
+        monitor.subTask("Creating node model ....");
         String nodeModelTemplate = "NodeModel.template";
         if (!includeSampleCode) {
             nodeModelTemplate = "NodeModelEmpty.template";
@@ -379,7 +536,7 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
         monitor.worked(1);
 
         // 7. create node dialog
-        monitor.beginTask("Creating node dialog ....", 1);
+        monitor.subTask("Creating node dialog ....");
         String nodeDialogTemplate = "NodeDialog.template";
         if (!includeSampleCode) {
             nodeDialogTemplate = "NodeDialogEmpty.template";
@@ -389,7 +546,7 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
         monitor.worked(1);
 
         // 8. create node view
-        monitor.beginTask("Creating node view ....", 1);
+        monitor.subTask("Creating node view ....");
         String nodeViewTemplate = "NodeView.template";
         if (!includeSampleCode) {
             nodeViewTemplate = "NodeViewEmpty.template";
@@ -399,7 +556,7 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
         monitor.worked(1);
 
         // 9. create node description xml file
-        monitor.beginTask("Creating node description xml file ....", 1);
+        monitor.subTask("Creating node description xml file ....");
         createFile(nodeName + "NodeFactory.xml", "NodeDescriptionXML.template",
                 substitutions, monitor, packageContainer);
 
@@ -407,8 +564,8 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
 
         // 10. create package.html file
         if (!packageContainer.getFile("package.html").exists()) {
-            monitor.beginTask("Creating package.html file ....", 1);
-            createFile("package.html", "packageHTML.template", substitutions,
+            monitor.subTask("Creating package.html file ....");
+            createFile("package.scala", "packageHTML.template", substitutions,
                     monitor, packageContainer);
         }
 
@@ -416,13 +573,11 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
 
         // 11. copy additional files (icon, ...)
         if (!packageContainer.getFile("default.png").exists()) {
-            monitor.beginTask("Adding additional files....", 2);
+            monitor.subTask("Adding additional files....");
             IFile defIcon = packageContainer.getFile("default.png");
 
             // copy default.png
-            URL url =
-                    KNIMEExtensionPlugin.getDefault().getBundle().getEntry(
-                            "templates/default.png");
+            URL url = FrameworkUtil.getBundle(getClass()).getEntry("templates/default.png");
             try {
                 defIcon.create(url.openStream(), true, monitor);
             } catch (IOException e1) {
@@ -555,9 +710,7 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
     private InputStream openSubstitutedContentStream(
             final String templateFileName, final Properties substitutions)
             throws CoreException {
-        URL url =
-                KNIMEExtensionPlugin.getDefault().getBundle().getEntry(
-                        "templates/" + templateFileName);
+        URL url = FrameworkUtil.getBundle(getClass()).getEntry("templates/" + templateFileName);
         String contents = "";
         try {
             BufferedReader reader =

@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="KNIME 2.11 TP with Scala" sequenceNumber="10">
+<?pde version="3.8"?><target name="KNIME 2.11 TP with Scala" sequenceNumber="68">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.eclipse.equinox.p2.user.ui.feature.group" version="0.0.0"/>
-<unit id="org.knime.features.base.feature.group" version="0.0.0"/>
+<unit id="org.knime.features.json.feature.group" version="2.11.0.0045414"/>
+<unit id="org.knime.features.base.feature.group" version="2.11.0.0045443"/>
 <repository location="http://www.knime.org/update/2.11"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-<unit id="org.scala-ide.scala211.source.feature.feature.group" version="4.0.0.201412161056"/>
 <unit id="org.scala-ide.scala211.feature.feature.group" version="4.0.0.201412161056"/>
+<unit id="org.scala-ide.scala211.source.feature.feature.group" version="4.0.0.201412161056"/>
 <repository location="http://download.scala-ide.org/sdk/lithium/e44/scala211/stable/site"/>
 </location>
 </locations>
 <targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 <launcherArgs>
-<vmArgs>-Xmx768m
--XX:MaxPermSize=256m
--server
--Dsun.java2d.d3d=false
--Dosgi.classloader.lock=classname
--XX:+UnlockDiagnosticVMOptions
--XX:+UnsyncloadClass 
--Dknime.enable.fastload=true
--ea
--Dorg.eclipse.swt.internal.gtk.cairoGraphics=false
--Dorg.eclipse.swt.internal.gtk.useCairo=false
+<vmArgs>-Xmx768m&#13;
+-XX:MaxPermSize=256m&#13;
+-server&#13;
+-Dsun.java2d.d3d=false&#13;
+-Dosgi.classloader.lock=classname&#13;
+-XX:+UnlockDiagnosticVMOptions&#13;
+-XX:+UnsyncloadClass &#13;
+-Dknime.enable.fastload=true&#13;
+-ea&#13;
+-Dorg.eclipse.swt.internal.gtk.cairoGraphics=false&#13;
+-Dorg.eclipse.swt.internal.gtk.useCairo=false&#13;
 -Dorg.eclipse.swt.browser.IEVersion=10001</vmArgs>
 </launcherArgs>
 </target>

@@ -40,6 +40,7 @@ import org.knime.core.data.DataRow
  * Implicits to help make working with KNIME easier to read.
  *
  * @author Gabor Bakos
+ * @since 2.11
  */
 object Implicits {
   implicit def intToIntCell(v: Int): IntValue = new IntCell(v)
@@ -48,6 +49,7 @@ object Implicits {
   implicit def booleanToBooleanCell(v: Boolean): BooleanValue = BooleanCell.get(v)
   implicit def stringToStringCell(v: String): StringValue = new StringCell(v)
   implicit def stringToRowKey(key: String): RowKey = new RowKey(key)
+  implicit def intToRowKey(key: Int): RowKey = RowKey.createRowKey(key)
 
   implicit def setToSetDataValue(set: collection.Set[DataCell]): SetDataValue = CollectionCellFactory.createSetCell(asJavaCollection(set))
   implicit def setToSetDataValue(set: collection.Seq[DataCell]): ListDataValue = CollectionCellFactory.createListCell(asJavaCollection(set))

@@ -20,5 +20,13 @@
          </description>
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.pde.core.targets">
+      <target
+            definition="KNIME.target"
+            id="org.knime.tp"
+            name="KNIME Target Platform">
+      </target>
+   </extension>
 
 </plugin>

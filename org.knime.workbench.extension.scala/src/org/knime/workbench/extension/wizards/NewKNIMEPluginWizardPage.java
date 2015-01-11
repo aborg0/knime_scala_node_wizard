@@ -1,9 +1,6 @@
 /*
  * ------------------------------------------------------------------------
- *
- *  Copyright (C) 2003 - 2011
- *  University of Konstanz, Germany and
- *  KNIME GmbH, Konstanz, Germany
+ *  Copyright by KNIME GmbH, Konstanz, Germany
  *  Website: http://www.knime.org; Email: contact@knime.org
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -57,6 +54,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -86,9 +84,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.knime.core.node.NodeFactory;
-import org.knime.core.node.NodeFactory.NodeType;
-import org.knime.workbench.plugin.KNIMEExtensionPlugin;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * This page enables the user to enter the information needed to create the
@@ -109,6 +105,8 @@ public class NewKNIMEPluginWizardPage extends WizardPage implements Listener {
     static final String SUBST_BASE_PACKAGE = "__BASE_PACKAGE__";
 
     static final String SUBST_BASE_PACKAGE_LAST = "__BASE_PACKAGE_LAST__";
+
+    static final String SUBST_PARENT_PACKAGE_WITH_PACKAGE = "__PARENT_PACKAGE_WITH_PACKAGE__";
 
     static final String SUBST_NODE_NAME = "__NODE_NAME__";
 
@@ -152,12 +150,17 @@ public class NewKNIMEPluginWizardPage extends WizardPage implements Listener {
 
     private Button m_packageBrowseButton;
 
+    private Button m_activateTP;
+
     private IJavaProject m_currentJavaProject;
 
     // load this icon only once per session (static)
-    private static final ImageDescriptor ICON = AbstractUIPlugin
-            .imageDescriptorFromPlugin(KNIMEExtensionPlugin.ID,
-                    "icons/knime_extension55.png");
+    private static final ImageDescriptor ICON = AbstractUIPlugin.imageDescriptorFromPlugin(
+        FrameworkUtil.getBundle(NewKNIMEPluginWizard.class).getSymbolicName(), "icons/knime_extension55.png");
+
+    // see also org.knime.core.node.NodeFactory.NodeType
+    private static final String[] NODE_TYPES = {"Source", "Sink", "Learner", "Predictor", "Manipulator", "Visualizer",
+        "Meta", "LoopStart", "LoopEnd", "QuickForm", "Other"};
 
     /**
      * Constructor for WizardPage.
@@ -168,7 +171,7 @@ public class NewKNIMEPluginWizardPage extends WizardPage implements Listener {
         super("wizardPage");
         setTitle("Create new KNIME Node-Extension (Scala)");
         setDescription("This wizard creates a KNIME Node-Extension "
-                + "(optionally with an initial plugin project)");
+                + "(optionally with an initial plugin project ");
         setImageDescriptor(ICON);
         if (selection instanceof TreeSelection) {
             m_selection = (TreeSelection)selection;
@@ -186,6 +189,8 @@ public class NewKNIMEPluginWizardPage extends WizardPage implements Listener {
         map.put(SUBST_BASE_PACKAGE, m_textBasePackage.getText());
         map.put(SUBST_BASE_PACKAGE_LAST, m_textBasePackage.getText().substring(
         		m_textBasePackage.getText().lastIndexOf('.') + 1));
+        map.put(SUBST_PARENT_PACKAGE_WITH_PACKAGE, m_textBasePackage.getText().contains(".") ? "package " + m_textBasePackage.getText().substring(0,
+        		m_textBasePackage.getText().lastIndexOf('.')) : "");
         map.put(SUBST_NODE_NAME, m_textNodeName.getText());
         // the description is preprocessed here
         // not so nice, format the created java file instead (this also
@@ -215,6 +220,15 @@ public class NewKNIMEPluginWizardPage extends WizardPage implements Listener {
      */
     public boolean getUseImplicits() {
         return m_useImplicits.getSelection();
+    }
+
+    /**
+     * Returns whether the KNIME target platform should be activated or not.
+     *
+     * @return <code>true</code> if it should be activated, <code>false</code> otherwise
+     */
+    public boolean getActivateTP() {
+        return m_activateTP.getSelection();
     }
 
     /**
@@ -500,6 +514,21 @@ public class NewKNIMEPluginWizardPage extends WizardPage implements Listener {
         // data.horizontalAlignment = SWT.CENTER;
         m_useImplicits.setLayoutData(data);
         m_useImplicits.setSelection(true);
+
+        // Checkbox for enabling the TP
+        m_activateTP = new Button(composite, SWT.CHECK);
+        m_activateTP.setText("Create and download KNIME Target Platform");
+        m_activateTP.setToolTipText("Downloads the necessary KNIME plug-in from the KNIME Update Site and creates a "
+            + "target platform. The download is about 130MB.");
+        data = new GridData(GridData.FILL_BOTH);
+        data.horizontalIndent = 7;
+        // data.horizontalAlignment = SWT.CENTER;
+        m_activateTP.setLayoutData(data);
+        m_activateTP.setSelection(!knimePluginsInstalled() && TPHelper.getInstance().currentTPIsRunningPlatform());
+    }
+    private boolean knimePluginsInstalled() {
+        return (Platform.getBundle("org.knime.core") != null)
+                && (Platform.getBundle("org.knime.workbench.repository") != null);
     }
 
     private String getSelectedPackage() {
@@ -536,16 +565,12 @@ public class NewKNIMEPluginWizardPage extends WizardPage implements Listener {
 
         Combo typeCombo = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
 
-        for (NodeType type : NodeFactory.NodeType.values()) {
+        for (String type : NODE_TYPES) {
+            typeCombo.add(type);
 
-            // unknown is just an internal type
-            if (!type.equals(NodeType.Unknown) && !type.equals(NodeType.Missing)) {
-                typeCombo.add(type.toString());
-
-                if (typeCombo.getText() == null
-                        || typeCombo.getText().trim().equals("")) {
-                    typeCombo.setText(type.toString());
-                }
+            if (typeCombo.getText() == null
+                    || typeCombo.getText().trim().equals("")) {
+                typeCombo.setText(type.toString());
             }
         }
 
@@ -722,6 +747,11 @@ public class NewKNIMEPluginWizardPage extends WizardPage implements Listener {
 
     }
 
+    /**
+     * Returns the project name the user has entered in case a new project should be created.
+     *
+     * @return the project name
+     */
     public String getProjectName() {
         if (m_projectNameField == null) {
             return "";
@@ -741,10 +771,20 @@ public class NewKNIMEPluginWizardPage extends WizardPage implements Listener {
         }
     };
 
+    /**
+     * Returns the name of an existing project into which the new classes should be added.
+     *
+     * @return the name of an existing project
+     */
     public String getExistingProjectName() {
         return m_comboExistingProjects.getText();
     }
 
+    /**
+     * Returns whether the new classes should be added to an existing project.
+     *
+     * @return <code>true</code> if they should be added to an existing project, <code>false</code> otherwise
+     */
     public boolean addToExistingProject() {
         return m_existingProjectRadio.getSelection();
     }
