@@ -4,6 +4,7 @@ import org.knime.core.node.NodeView;
 
 /**
  * <code>NodeView</code> for the "__NODE_NAME__" Node.
+ * 
  * __DESCRIPTION__
  *
  * @constructor Creates a new view.
@@ -18,21 +19,21 @@ class __NODE_NAME__NodeView(nodeModel: __NODE_NAME__NodeModel) extends NodeView[
   /**
    * @inheritdoc
    */
-  protected override def modelChanged {
+  protected override def modelChanged: Unit = {
     // TODO: generated method stub
   }
 
   /**
    * @inheritdoc
    */
-  protected override def onClose {
+  protected override def onClose: Unit = {
     // TODO: generated method stub
   }
 
   /**
    * @inheritdoc
    */
-  protected override def onOpen {
+  protected override def onOpen: Unit = {
     // TODO: generated method stub
   }
 }

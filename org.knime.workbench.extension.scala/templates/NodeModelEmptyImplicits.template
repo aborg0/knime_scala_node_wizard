@@ -37,6 +37,7 @@ object __NODE_NAME__NodeModel {
 
 /**
  * This is the model implementation of __NODE_NAME__.
+ * 
  * __DESCRIPTION__
  *
  * @author __VENDOR_NAME__
@@ -60,7 +61,7 @@ class __NODE_NAME__NodeModel extends NodeModel(1, 1) {
   /**
    * @inheritdoc
    */
-  protected override def reset {
+  protected override def reset: Unit = {
     // TODO: generated method stub
   }
 
@@ -76,7 +77,7 @@ class __NODE_NAME__NodeModel extends NodeModel(1, 1) {
   /**
    * @inheritdoc
    */
-  protected override def saveSettingsTo(settings: NodeSettingsWO) {
+  protected override def saveSettingsTo(settings: NodeSettingsWO): Unit = {
     // TODO: generated method stub
   }
 
@@ -84,7 +85,7 @@ class __NODE_NAME__NodeModel extends NodeModel(1, 1) {
    * @inheritdoc
    */
   @throws[InvalidSettingsException]
-  protected override def loadValidatedSettingsFrom(settings: NodeSettingsRO) {
+  protected override def loadValidatedSettingsFrom(settings: NodeSettingsRO): Unit = {
     // TODO: generated method stub
   }
 
@@ -92,7 +93,7 @@ class __NODE_NAME__NodeModel extends NodeModel(1, 1) {
    * @inheritdoc
    */
   @throws[InvalidSettingsException]
-  protected override def validateSettings(settings: NodeSettingsRO) {
+  protected override def validateSettings(settings: NodeSettingsRO): Unit = {
     // TODO: generated method stub
   }
 
@@ -102,7 +103,7 @@ class __NODE_NAME__NodeModel extends NodeModel(1, 1) {
   @throws[IOException]
   @throws[CanceledExecutionException]
   protected override def loadInternals(internDir: File,
-    exec: ExecutionMonitor) {
+    exec: ExecutionMonitor): Unit = {
     // TODO: generated method stub
   }
 
@@ -112,7 +113,7 @@ class __NODE_NAME__NodeModel extends NodeModel(1, 1) {
   @throws[IOException]
   @throws[CanceledExecutionException]
   protected override def saveInternals(internDir: File,
-    exec: ExecutionMonitor) {
+    exec: ExecutionMonitor): Unit = {
     // TODO: generated method stub
   }
 }

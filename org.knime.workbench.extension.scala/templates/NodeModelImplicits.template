@@ -47,6 +47,7 @@ object __NODE_NAME__NodeModel {
 
 /**
  * This is the model implementation of __NODE_NAME__.
+ * 
  * __DESCRIPTION__
  *
  * @author __VENDOR_NAME__
@@ -89,11 +90,11 @@ class __NODE_NAME__NodeModel extends NodeModel(1, 1) {
     val container: BufferedDataContainer = outputSpec
     // let's add m_count rows to it
     for (i <- 0 until count) {
-      val key: RowKey = "Row " + i
+      val key: RowKey = i
       // the cells of the current row, the types of the cells must match
       // the column spec (see above)
       val cells = new Array[DataCell](3)
-      cells(0) = "String_" + i
+      cells(0) = a"String_$i"
       cells(1) = 0.5 * i
       cells(2) = i
       val row: DataRow = key withData cells
@@ -112,7 +113,7 @@ class __NODE_NAME__NodeModel extends NodeModel(1, 1) {
   /**
    * @inheritdoc
    */
-  protected override def reset {
+  protected override def reset: Unit = {
     // TODO Code executed on reset.
     // Models build during execute are cleared here.
     // Also data handled in load/saveInternals will be erased here.
@@ -136,7 +137,7 @@ class __NODE_NAME__NodeModel extends NodeModel(1, 1) {
   /**
    * @inheritdoc
    */
-  protected override def saveSettingsTo(settings: NodeSettingsWO) {
+  protected override def saveSettingsTo(settings: NodeSettingsWO): Unit = {
 
     // TODO save user settings to the config object.
 
@@ -148,7 +149,7 @@ class __NODE_NAME__NodeModel extends NodeModel(1, 1) {
    * @inheritdoc
    */
   @throws[InvalidSettingsException]
-  protected override def loadValidatedSettingsFrom(settings: NodeSettingsRO) {
+  protected override def loadValidatedSettingsFrom(settings: NodeSettingsRO): Unit = {
 
     // TODO load (valid) settings from the config object.
     // It can be safely assumed that the settings are valided by the 
@@ -162,7 +163,7 @@ class __NODE_NAME__NodeModel extends NodeModel(1, 1) {
    * @inheritdoc
    */
   @throws[InvalidSettingsException]
-  protected override def validateSettings(settings: NodeSettingsRO) {
+  protected override def validateSettings(settings: NodeSettingsRO): Unit = {
 
     // TODO check if the settings could be applied to our model
     // e.g. if the count is in a certain range (which is ensured by the
@@ -179,7 +180,7 @@ class __NODE_NAME__NodeModel extends NodeModel(1, 1) {
   @throws[IOException]
   @throws[CanceledExecutionException]
   protected override def loadInternals(internDir: File,
-    exec: ExecutionMonitor) {
+    exec: ExecutionMonitor): Unit = {
 
     // TODO load internal data. 
     // Everything handed to output ports is loaded automatically (data
@@ -196,7 +197,7 @@ class __NODE_NAME__NodeModel extends NodeModel(1, 1) {
   @throws[IOException]
   @throws[CanceledExecutionException]
   protected override def saveInternals(internDir: File,
-    exec: ExecutionMonitor) {
+    exec: ExecutionMonitor): Unit = {
 
     // TODO save internal models. 
     // Everything written to output ports is saved automatically (data

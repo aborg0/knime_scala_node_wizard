@@ -48,6 +48,7 @@ object __NODE_NAME__NodeModel {
 
 /**
  * This is the model implementation of __NODE_NAME__.
+ * 
  * __DESCRIPTION__
  *
  * @author __VENDOR_NAME__
@@ -89,11 +90,11 @@ class __NODE_NAME__NodeModel extends NodeModel(1, 1) {
     val container = exec.createDataContainer(outputSpec)
     // let's add m_count rows to it
     for (i <- 0 until m_count.getIntValue()) {
-      val key = new RowKey("Row " + i);
+      val key = RowKey.createRowKey(i)
       // the cells of the current row, the types of the cells must match
       // the column spec (see above)
       val cells = new Array[DataCell](3)
-      cells(0) = new StringCell("String_" + i)
+      cells(0) = new StringCell(s"String_$i")
       cells(1) = new DoubleCell(0.5 * i)
       cells(2) = new IntCell(i)
       val row: DataRow = new DefaultRow(key, cells: _*)
