@@ -441,6 +441,8 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
                     container);
             createFile("build.properties", "build.properties.template",
                     substitutions, monitor, container);
+            createFile("customBuildCallbacks.xml", "customBuildCallbacks.xml",
+            		substitutions, monitor, container);
             createFile(".classpath", "classpath.template", substitutions,
                     monitor, container);
             createFile(".project", "project.template", substitutions, monitor,
@@ -450,7 +452,7 @@ public class NewKNIMEPluginWizard extends Wizard implements INewWizard {
             settingsContainer.create(true, true, monitor);
             createFile("org.scala-ide.sdt.core.prefs", "org.scala-ide.sdt.core.prefs", substitutions, monitor,
                     settingsContainer);
-            monitor.worked(8);
+            monitor.worked(9);
 
             // 2. create Manifest.MF
             monitor.subTask("Creating OSGI Manifest file ....");

@@ -1,3 +1,5 @@
+customBuildCallbacks=customBuildCallbacks.xml
+customBuildCallbacks.inheritall=true
 source.__JAR_NAME__ = src/main/scala/
 bin.includes = plugin.xml,\
                META-INF/,\
