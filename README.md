@@ -44,7 +44,9 @@ less.feature.feature.group`~~
 ~~`c:\Java\buckminster>cd ..\director`~~
 
     c:\Java\director>director -r http://download.eclipse.org/releases/kepler/ -d c:\java\buckminster_eclipse -profileProperties "org.eclipse.update.install.features=true" -p SDKProfile -i org.eclipse.sdk.ide
-(You might need to let Java out of your firewall at this point.)
+
+Note: You might need to let Java out of your firewall at this point.
+
     c:\Java\director>cd ..\buckminster_eclipse
     c:\Java\buckminster_eclipse>eclipsec -nosplash -application org.eclipse.equinox.p2.director -repository http://download.eclipse.org/tools/buckminster/headless-4.3 -installIU org.eclipse.buckminster.core.headless.feature.feature.group -installIU org.eclipse.buckminster.git.headless.feature.feature.group -installIU org.eclipse.buckminster.pde.headless.feature.feature.group
     c:\Java\buckminster_eclipse>eclipsec -nosplash -application org.eclipse.equinox.p2.director -repository http://download.scala-ide.org/sdk/lithium/e38/scala211/stable/site -installIU org.scala-ide.sdt.feature.feature.group -installIU org.scala-ide.sdt.weaving.feature.feature.group
@@ -52,6 +54,7 @@ less.feature.feature.group`~~
 
 Usage:
 
+    c:\java\buckminster_eclipse\eclipsec -nosplash -application org.eclipse.buckminster.cmdline.headless importtargetdefinition -A /path/to/target/definition.target
     c:\java\buckminster_eclipse\eclipsec -nosplash -application org.eclipse.buckminster.cmdline.headless build
 
 Though [this](http://www.ralfebert.de/archive/eclipse_rcp/rcp_builds/) might be more useful.
