@@ -1,6 +1,8 @@
 KNIME Scala node wizard
 =======================
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/aborg0/knime_scala_node_wizard?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 The Scala version of KNIME node wizard.
 
 How to install:
