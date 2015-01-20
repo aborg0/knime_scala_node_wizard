@@ -54,7 +54,7 @@ Note: You might need to let Java out of your firewall at this point.
     c:\Java\buckminster_eclipse>eclipsec -nosplash -application org.eclipse.equinox.p2.director -repository http://download.scala-ide.org/sdk/lithium/e38/scala211/stable/site -installIU org.scala-ide.sdt.feature.feature.group -installIU org.scala-ide.sdt.weaving.feature.feature.group
     echo -Dsdtcore.headless >> eclipse.ini
 
-Usage (you should update the `buckminster.properties` to your needs, [here](knime_scala_node_wizard/org.knime.workbench.scala.site/buckminster.properties) is an example; the workspace used is the one at `${user.home}/workspace`):
+Usage (you should update the `buckminster.properties` to your needs, [here](knime_scala_node_wizard/org.knime.workbench.scala.site/buckminster.properties) is an example; the workspace used is the one at `${user.home}/workspace`, with `-data` you can [specify other](https://wiki.eclipse.org/Common_headless_flags_%28Buckminster%29)):
 
     c:\java\buckminster_eclipse\eclipsec -nosplash -application org.eclipse.buckminster.cmdline.headless importtargetdefinition -A /path/to/target/definition.target
     c:\java\buckminster_eclipse\eclipsec -nosplash -application org.eclipse.buckminster.cmdline.headless build
