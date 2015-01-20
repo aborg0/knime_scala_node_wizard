@@ -52,9 +52,10 @@ Note: You might need to let Java out of your firewall at this point.
     c:\Java\buckminster_eclipse>eclipsec -nosplash -application org.eclipse.equinox.p2.director -repository http://download.scala-ide.org/sdk/lithium/e38/scala211/stable/site -installIU org.scala-ide.sdt.feature.feature.group -installIU org.scala-ide.sdt.weaving.feature.feature.group
     echo -Dsdtcore.headless >> eclipse.ini
 
-Usage:
+Usage (you should update the `buckminster.properties` to your needs, [here](knime_scala_node_wizard/org.knime.workbench.scala.site/buckminster.properties) is an example):
 
     c:\java\buckminster_eclipse\eclipsec -nosplash -application org.eclipse.buckminster.cmdline.headless importtargetdefinition -A /path/to/target/definition.target
     c:\java\buckminster_eclipse\eclipsec -nosplash -application org.eclipse.buckminster.cmdline.headless build
+    c:\java\buckminster_eclipse\eclipsec -nosplash -application org.eclipse.buckminster.cmdline.headless perform -D target.os=* -D target.ws=* -D target.arch=* -P /path/to/buckminster.properties org.knime.workbench.scala.site#site.p2
 
 Though [this](http://www.ralfebert.de/archive/eclipse_rcp/rcp_builds/) might be more useful.
