@@ -1,6 +1,8 @@
 KNIME Scala node wizard
 =======================
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/aborg0/knime_scala_node_wizard?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 The Scala version of KNIME node wizard.
 
 How to install:
@@ -25,3 +27,37 @@ How to develop:
 
 How to use:
  - create a new project (Create a new KNIME Node-Extension (Scala)) using the wizard and have fun coding KNIME nodes in Scala ;)
+
+Building with Buckminster
+-------------------------
+Based on [Build Scala projects with Eclipse Buckminster](http://www.michel-kraemer.com/build-scala-projects-with-eclipse-buckminster):
+Download the [latest director](http://www.eclipse.org/downloads/download.php?file=/tools/buckminster/products/director_latest.zip) and unzip to a location (`c:\java\director` in this example).
+
+~~`C:\Java\director>director -r http://download.eclipse.org/tools/buckminster/headless-4.3 -d c:\java\buckminster -p Buckminster -i org.eclipse.buckminster.cmdline.product`~~
+~~`C:\Java\director>cd c:\java\buckminster`~~
+~~`c:\Java\buckminster>buckminster install http://download.eclipse.org/tools/buckminster/headless-4.3 org.eclipse.buckminster.core.headless.feature`~~
+
+~~`c:\Java\buckminster>buckminster install http://download.eclipse.org/tools/buckminster/headless-4.3 org.eclipse.buckminster.emma.headless.feature`~~
+~~`No suitable feature/version found that matches org.eclipse.buckminster.emma.head
+less.feature.feature.group`~~
+
+~~`c:\Java\buckminster>buckminster install http://download.eclipse.org/tools/buckminster/headless-4.3 org.eclipse.buckminster.git.headless.feature`~~
+~~`c:\Java\buckminster>buckminster install http://download.eclipse.org/tools/buckminster/headless-4.3 org.eclipse.buckminster.pde.headless.feature`~~
+~~`c:\Java\buckminster>cd ..\director`~~
+
+    c:\Java\director>director -r http://download.eclipse.org/releases/kepler/ -d c:\java\buckminster_eclipse -profileProperties "org.eclipse.update.install.features=true" -p SDKProfile -i org.eclipse.sdk.ide
+
+Note: You might need to let Java out of your firewall at this point.
+
+    c:\Java\director>cd ..\buckminster_eclipse
+    c:\Java\buckminster_eclipse>eclipsec -nosplash -application org.eclipse.equinox.p2.director -repository http://download.eclipse.org/tools/buckminster/headless-4.3 -installIU org.eclipse.buckminster.core.headless.feature.feature.group -installIU org.eclipse.buckminster.git.headless.feature.feature.group -installIU org.eclipse.buckminster.pde.headless.feature.feature.group
+    c:\Java\buckminster_eclipse>eclipsec -nosplash -application org.eclipse.equinox.p2.director -repository http://download.scala-ide.org/sdk/lithium/e38/scala211/stable/site -installIU org.scala-ide.sdt.feature.feature.group -installIU org.scala-ide.sdt.weaving.feature.feature.group
+    echo -Dsdtcore.headless >> eclipse.ini
+
+Usage (you should update the `buckminster.properties` to your needs, [here](knime_scala_node_wizard/org.knime.workbench.scala.site/buckminster.properties) is an example; the workspace used is the one at `${user.home}/workspace`, with `-data` you can [specify other](https://wiki.eclipse.org/Common_headless_flags_%28Buckminster%29)):
+
+    c:\java\buckminster_eclipse\eclipsec -nosplash -application org.eclipse.buckminster.cmdline.headless importtargetdefinition -A /path/to/target/definition.target
+    c:\java\buckminster_eclipse\eclipsec -nosplash -application org.eclipse.buckminster.cmdline.headless build
+    c:\java\buckminster_eclipse\eclipsec -nosplash -application org.eclipse.buckminster.cmdline.headless perform -D target.os=* -D target.ws=* -D target.arch=* -P /path/to/buckminster.properties org.knime.workbench.scala.site#site.p2
+
+Though [this](http://www.ralfebert.de/archive/eclipse_rcp/rcp_builds/) might be more useful.
